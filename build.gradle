@@ -1,0 +1,71 @@
+plugins { id 'java-library' }
+
+group = 'dev.philippcmd'
+version = '26.x_3.4-jiujiu-cjmfix2-stealth4'
+
+repositories { mavenCentral() }
+
+java { toolchain.languageVersion = JavaLanguageVersion.of(25) }
+sourceSets.main {
+    java.srcDirs = ['jiujiu/src/main/java']
+    resources.srcDirs = ['jiujiu/src/main/resources']
+}
+sourceSets.test.java.srcDirs = ['jiujiu/src/test/java']
+
+// Compile these definitions directly from the preserved upstream source tree.
+tasks.named('compileJava', JavaCompile) {
+    source fileTree('src/main/java') {
+        include 'de/myzelyam/api/vanish/PlayerVanishStateChangeEvent.java'
+        include 'de/myzelyam/api/vanish/PostPlayerHideEvent.java'
+        include 'de/myzelyam/api/vanish/PostPlayerShowEvent.java'
+    }
+}
+dependencies {
+    compileOnly fileTree('dependencies') {
+        include '*.jar'
+        exclude 'supervanish-baseline.jar', 'shiroha-26.2.jar', 'CoreProtect-24.0.jar'
+    }
+    testImplementation fileTree('dependencies') { include '*.jar'; exclude 'asm-*.jar' }
+    testImplementation platform('org.junit:junit-bom:5.13.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.mockito:mockito-core:5.21.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testRuntimeOnly 'org.yaml:snakeyaml:2.6'
+    testRuntimeOnly 'net.kyori:adventure-text-logger-slf4j:5.2.0'
+    testRuntimeOnly 'org.slf4j:slf4j-api:2.0.17'
+    testRuntimeOnly 'org.apache.logging.log4j:log4j-api:2.26.0'
+    testRuntimeOnly 'com.google.code.gson:gson:2.14.0'
+    testRuntimeOnly 'org.joml:joml:1.10.8'
+    testRuntimeOnly 'net.kyori:adventure-text-minimessage:5.2.0'
+}
+
+tasks.named('processResources') {
+    filesMatching('plugin.yml') { expand(version: project.version) }
+}
+
+tasks.named('jar') {
+    from('LICENSE') { into 'META-INF'; rename { 'SuperVanish-LICENSE.txt' } }
+    manifest {
+        attributes(
+            'SuperVanish-Upstream-Revision': 'a1d6093569062afdac72daec45430a94a3065bab',
+            'SuperVanish-Upstream-Version': '6.3.0',
+            'SuperVanish-JiuJiu-Revision': 'folia26.2-stealth4-20261121',
+            'paperweight-mappings-namespace': 'mojang'
+        )
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    systemProperty 'net.bytebuddy.experimental', 'true'
+    jvmArgs '-XX:+EnableDynamicAgentLoading'
+}
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 25
+    options.compilerArgs.add('-proc:none')
+}
+tasks.withType(Jar).configureEach {
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+}

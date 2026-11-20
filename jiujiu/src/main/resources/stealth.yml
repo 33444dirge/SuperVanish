@@ -1,0 +1,50 @@
+# 隐身巡查设置：仅作用于普通隐身和超级隐身的玩家，恢复可见后恢复正常操作。
+# 使用 UTF-8；修改后由 OP 在游戏执行 /vanish-stealth reload，或停服重启。
+# 不修改 players.yml，不覆盖 CoreProtect 配置、MySQL 连接或历史数据库。
+features:
+  # 隐身时不拾取地面物品；已有背包物品不移除，也不删除地面物品。
+  prevent-item-pickup: true
+  # 隐身时是否也禁止吸收经验球；false 表示保留原版经验球拾取。
+  prevent-experience-pickup: true
+  # 普通、陷阱、全部8种铜箱（含涂蜡/氧化）及其双箱：隐身开关不触发箱盖/声音。
+  # 陷阱箱也不触发隐身者的开箱红石信号；不同氧化程度相连铜箱沿用原版处理。
+  # 真实箱子库存保持实时交互，不是复制库存；普通玩家开箱仍正常有动画和声音。
+  # 此开关不包括木桶、末影箱、潜影盒或第三方自定义容器。
+  silent-chests: true
+  # 发布本插件的 Bukkit vanished 隐身标记，供 TAB 等插件识别。
+  # TAB 6.2.1 的 %online%/%worldonline%/%serveronline% 会排除隐身者，3人隐身1人显示2。
+  # 仅影响识别该标记的插件统计，不改变服务端真实在线人数，也不改 TAB 配置。
+  # 旧配置缺少此项时默认 true；PAPI %server_online% 等原始人数不保证随之改变。
+  publish-vanish-metadata: true
+  # 仅取消 CoreProtect 24.0 现有预记录事件，不修改它的源码/JAR/数据库。
+  # 覆盖方块、交互、击杀、告示牌、容器、物品、命令；不覆盖聊天、会话及改名。
+  # 接口在异步写入时触发：按回调当时的隐身状态过滤，快速显隐切换可能存在队列边界。
+  # 第三方插件以系统名称而非该玩家名记录的间接操作，也不保证能识别。
+  filter-coreprotect: true
+# 自定义节点需在权限插件中授权；空字符串拒绝访问。原节点默认 OP 拥有。
+admin-permission: 'vanish.stealth.admin'
+messages:
+  # 支持 & 颜色代码；花括号占位符保留原样。
+  enabled: '&a开启'
+  disabled: '&c关闭'
+  status: '&b隐身巡查 &8| &7静默开箱：{chests} &7禁止拾取：{pickup} &7记录过滤：{coreprotect}'
+  players-only: '&c此命令只能在游戏内使用。'
+  vanish-on: '&8[&b隐身&8] &b已开启普通隐身。'
+  vanish-off: '&8[&b隐身&8] &a已恢复可见。'
+  super-on: '&8[&b隐身&8] &d已开启超级隐身。'
+  super-off: '&8[&b隐身&8] &a已退出超级隐身。'
+  list-empty: '&7当前没有在线的普通隐身玩家。'
+  list: '&b普通隐身玩家：&f{players}'
+  show-usage: '&e用法：/vanish-show <玩家名|--all>'
+  show-all: '&a你现在可以看见 &f{count} &a名普通隐身玩家。'
+  not-found: '&c未找到在线玩家：{player}'
+  not-hidden: '&e玩家 {player} 当前没有隐身。'
+  cannot-reveal: '&d玩家 {player} 正在超级隐身，无法显示。'
+  revealed: '&a你现在可以看见玩家 &f{player}&a。'
+  spectator-on: '&b已切换为旁观模式'
+  spectator-off: '&a已退出旁观模式'
+  no-permission: '&8[&b隐身巡查&8] &c你没有管理此功能的权限。'
+  reloaded: '&8[&b隐身巡查&8] &a巡查配置已重载。'
+  reload-failed: '&8[&b隐身巡查&8] &c配置读取失败，已保留原设置，请检查控制台。'
+  open-failed: '&8[&b隐身巡查&8] &e此次静默开箱失败，请联系管理员查看控制台。'
+  scope: '&7CoreProtect 过滤仅覆盖现有接口；聊天、会话及改名不在范围内。'

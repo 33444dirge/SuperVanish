@@ -1,0 +1,53 @@
+name: SuperVanish
+version: '${version}'
+main: dev.philippcmd.supervanish.Main
+api-version: '26.2'
+folia-supported: true
+softdepend: [CoreProtect]
+commands:
+  vanish:
+    description: '切换普通隐身'
+    usage: '/vanish'
+    permission: vanish.use
+    permission-message: '§c你没有使用普通隐身的权限。'
+  vanish-show:
+    description: '查看普通隐身玩家'
+    usage: '/vanish-show <玩家名|--all>'
+    permission: vanish.show
+    permission-message: '§c你没有查看隐身玩家的权限。'
+  vanish-list:
+    description: '列出普通隐身玩家'
+    usage: '/vanish-list'
+    permission: vanish.list
+    permission-message: '§c你没有查看隐身名单的权限。'
+  supervanish:
+    description: '切换超级隐身'
+    usage: '/supervanish'
+    aliases: [sv]
+    permission: vanish.supervanish
+    permission-message: '§c你没有使用超级隐身的权限。'
+  vanish-stealth:
+    description: '查看巡查状态或重载巡查配置'
+    usage: '/vanish-stealth [reload]'
+permissions:
+  vanish.use:
+    default: op
+  vanish.show:
+    default: op
+  vanish.list:
+    default: op
+  vanish.supervanish:
+    default: op
+  vanish.spectator:
+    default: op
+  vanish.stealth.admin:
+    default: op
+  vanish.*:
+    default: op
+    children:
+      vanish.use: true
+      vanish.show: true
+      vanish.list: true
+      vanish.supervanish: true
+      vanish.spectator: true
+      vanish.stealth.admin: true

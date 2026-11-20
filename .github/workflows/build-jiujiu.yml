@@ -1,0 +1,37 @@
+name: Build JiuJiu Folia 26.2
+
+on:
+  push:
+    branches: [jiujiu]
+  pull_request:
+    branches: [jiujiu]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          distribution: zulu
+          java-version: '25'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build and test
+        run: bash ./gradlew clean build --no-daemon --console=plain
+      - name: Upload plugin
+        uses: actions/upload-artifact@v7
+        with:
+          name: SuperVanish-JiuJiu-Folia26.2
+          path: build/libs/SuperVanish-*.jar
+          if-no-files-found: error
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: SuperVanish-JiuJiu-Test-Reports
+          path: build/reports/tests/test/
+          if-no-files-found: ignore
